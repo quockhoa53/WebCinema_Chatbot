@@ -1,0 +1,131 @@
+package poly.controller;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import admin.controller.Message;
+import poly.entity.KhachHang;
+import poly.entity.LichChieu;
+import poly.entity.Phim;
+import poly.entity.TaiKhoan;
+
+@Transactional
+@Controller
+@RequestMapping("/film")
+public class FilmController {
+    @Autowired
+    SessionFactory factory;
+
+    public Phim layPhim(Integer maPhim) {
+        Session session = factory.getCurrentSession();
+        String hql = "FROM Phim WHERE MaPhim = :maPhim";
+        Query query = session.createQuery(hql);
+        query.setParameter("maPhim", maPhim);
+        return (Phim) query.uniqueResult();
+    }
+
+    public List<LichChieu> layLichChieu(Integer maPhim, Date ngayChieu) {
+        Session session = factory.getCurrentSession();
+        String hql = "FROM LichChieu lc WHERE lc.dsPhim.maPhim = :maPhim AND lc.ngayChieu = :ngayChieu " +
+                     "AND (lc.ngayChieu > :currentDate OR (lc.ngayChieu = :currentDate AND lc.gioChieu > :currentTime))";
+        Query query = session.createQuery(hql);
+        query.setParameter("maPhim", maPhim);
+        query.setParameter("ngayChieu", ngayChieu);
+        query.setParameter("currentDate", new Date());
+        query.setParameter("currentTime", new java.sql.Time(System.currentTimeMillis()));
+        return query.list();
+    }
+
+    @RequestMapping("/detail/ma={id}.htm")
+    public String detail(ModelMap model, @PathVariable("id") Integer id, HttpSession session, RedirectAttributes redirectAttributes) {
+        Phim phim = layPhim(id);
+        if (phim == null) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Không tìm thấy phim!"));
+            return "redirect:/error.htm";
+        }
+
+        KhachHang khachHang = (KhachHang) session.getAttribute("user");
+        TaiKhoan taiKhoan = (TaiKhoan) session.getAttribute("tk");
+
+        model.addAttribute("phim", phim);
+        model.addAttribute("day", LocalDate.now());
+        model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        if (khachHang == null || taiKhoan == null) {
+            model.addAttribute("login", false);
+        } else {
+            model.addAttribute("login", true);
+            model.addAttribute("user", khachHang);
+            model.addAttribute("tk", taiKhoan);
+            model.addAttribute("lv", layLVKH(khachHang.getMaKH()));
+        }
+
+        return "detail";
+    }
+
+    @RequestMapping("detail/ma={id}/{ngay}.htm")
+    public String showtimes(ModelMap model, @PathVariable("id") Integer id, @PathVariable("ngay") String ngay,
+                           HttpSession session, RedirectAttributes redirectAttributes) {
+        Phim phim = layPhim(id);
+        if (phim == null) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Không tìm thấy phim!"));
+            return "redirect:/error.htm";
+        }
+
+        Date ngayChieu;
+        try {
+            ngayChieu = new SimpleDateFormat("yyyy-MM-dd").parse(ngay.trim());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Ngày không hợp lệ!"));
+            return "redirect:/film/detail/ma=" + id + ".htm";
+        }
+
+        List<LichChieu> list = layLichChieu(id, ngayChieu);
+
+        KhachHang khachHang = (KhachHang) session.getAttribute("user");
+        TaiKhoan taiKhoan = (TaiKhoan) session.getAttribute("tk");
+
+        model.addAttribute("phim", phim);
+        model.addAttribute("lc", list);
+        model.addAttribute("day", LocalDate.now());
+        model.addAttribute("currentDate", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        if (khachHang == null || taiKhoan == null) {
+            model.addAttribute("login", false);
+        } else {
+            model.addAttribute("login", true);
+            model.addAttribute("user", khachHang);
+            model.addAttribute("tk", taiKhoan);
+            model.addAttribute("lv", layLVKH(khachHang.getMaKH()));
+        }
+
+        return "detail";
+    }
+
+    private List<Ve> layLVKH(Integer maKH) {
+        Session session = factory.getCurrentSession();
+        String hql = "FROM Ve WHERE maKH = :maKH";
+        Query query = session.createQuery(hql);
+        query.setParameter("maKH", maKH);
+        return query.list();
+    }
+}

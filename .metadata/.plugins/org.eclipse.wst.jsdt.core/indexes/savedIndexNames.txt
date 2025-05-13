@@ -1,0 +1,8 @@
+INDEX VERSION 1.4+D:\HeThongThongMinh_WebCinema\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+2889155917.index
+1569791101.index
+2164090526.index
+3550717522.index
+3666411469.index
+947459813.index
+2535128729.index

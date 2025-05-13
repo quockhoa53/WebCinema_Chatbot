@@ -1,0 +1,21 @@
+
+Mar 06, 2024 07:37:16.43 NEW SESSION
+Mar 06, 2024 07:37:16.43 [21132:3516:0306/073716.432:ERROR:policy_logger.cc(157)] :components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc(161) Cloud management controller initialization aborted as CBCM is not enabled. Please use the `--enable-chrome-browser-cloud-management` command line flag to enable it if you are not using the official Google Chrome build.
+Mar 06, 2024 07:37:21.25 [21132:3516:0306/073721.251:ERROR:CONSOLE(2)] "Blocked autofocusing on a <cib-action-bar> element in a cross-origin subframe.", source: https://edgeservices.bing.com/rp/-wTRHV-EM6UUnbvwUyPNvL3688U.br.js (2)
+Mar 06, 2024 07:37:21.27 [21132:3516:0306/073721.275:ERROR:CONSOLE(2)] "Blocked autofocusing on a <textarea> element in a cross-origin subframe.", source: https://edgeservices.bing.com/rp/-wTRHV-EM6UUnbvwUyPNvL3688U.br.js (2)
+
+Mar 06, 2024 20:23:44.06 NEW SESSION
+Mar 06, 2024 20:23:44.07 [16676:14744:0306/202344.062:ERROR:device_event_log_impl.cc(214)] [20:23:44.062] USB: usb_device_handle_win.cc:1048 Failed to read descriptor from node connection: A device attached to the system is not functioning. (0x1F)
+
+Jun 10, 2024 08:06:49.85 NEW SESSION
+Jun 10, 2024 08:06:49.87 Created TensorFlow Lite XNNPACK delegate for CPU.
+Jun 10, 2024 09:20:48.80 [24128:22588:0610/092048.808:ERROR:interface_endpoint_client.cc(722)] Message 0 rejected by interface blink.mojom.WidgetHost
+Jun 10, 2024 09:30:37.10 [24128:17972:0610/093037.108:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+Jun 10, 2024 09:43:32.79 [24128:17972:0610/094332.794:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+Jun 10, 2024 10:12:56.30 [24128:22588:0610/101256.304:ERROR:device_event_log_impl.cc(195)] [10:12:56.303] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: Element not found. (0x490)
+Jun 10, 2024 11:04:41.67 [24128:22588:0610/110441.676:ERROR:device_event_log_impl.cc(195)] [11:04:41.676] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: Element not found. (0x490)
+Jun 10, 2024 11:41:41.83 [24128:17972:0610/114141.834:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+Jun 10, 2024 12:02:25.24 [24128:17972:0610/120225.243:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+Jun 10, 2024 12:06:41.90 [24128:22588:0610/120641.903:ERROR:device_event_log_impl.cc(195)] [12:06:41.903] USB: usb_service_win.cc:105 SetupDiGetDeviceProperty({{A45C254E-DF1C-4EFD-8020-67D146A850E0}, 6}) failed: Element not found. (0x490)
+Jun 10, 2024 12:06:45.23 [24128:17972:0610/120645.234:ERROR:connection_factory_impl.cc(483)] ConnectionHandler failed with net error: -2
+Jun 10, 2024 13:21:02.89 [24128:17972:0610/132102.898:ERROR:connection_factory_impl.cc(434)] Failed to connect to MCS endpoint with error -105

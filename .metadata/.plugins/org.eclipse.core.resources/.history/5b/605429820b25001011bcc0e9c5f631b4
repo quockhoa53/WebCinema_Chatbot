@@ -1,0 +1,143 @@
+/* Đảm bảo card phim/sự kiện/đạo diễn có kích thước đồng đều */
+.trend_2i .col-md-4,
+.upcome .trend_2i .col-md-4,
+.choice .trend_2i .col-md-4 {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Đảm bảo card có chiều cao bằng nhau trong hàng */
+}
+
+.trend_2im,
+.trend_2ilast {
+    flex: 1;
+}
+
+/* Cố định kích thước ảnh */
+.trend_2im1 img {
+    width: 100%;
+    height: 300px; /* Chiều cao cố định cho ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+}
+
+/* Cân đối phần nội dung bên dưới ảnh */
+.trend_2ilast {
+    min-height: 220px; /* Chiều cao tối thiểu để đồng đều */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Giới hạn chiều cao mô tả */
+.trend_2ilast p {
+    max-height: 80px; /* Giới hạn chiều cao mô tả */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Giới hạn 3 dòng */
+    -webkit-box-orient: vertical;
+    margin-bottom: 10px;
+}
+
+/* Đảm bảo phần trạng thái (Now Playing, Upcoming Release, v.v.) và đánh giá căn chỉnh hợp lý */
+.trend_2ilast b p {
+    margin: 5px 0;
+}
+
+.trend_2ilast .col_red {
+    margin-top: auto; /* Đẩy phần đánh giá xuống dưới cùng */
+}
+
+/* Cải thiện giao diện danh mục phim */
+#popular .nav-tabs {
+    border-bottom: 2px solid #dc3545; /* Đường viền đỏ nổi bật */
+    margin-bottom: 20px;
+}
+
+#popular .nav-tabs .nav-link {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+#popular .nav-tabs .nav-link.active {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+#popular .nav-tabs .nav-link:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+/* Cân đối nội dung trong tab */
+.popular_2i1 {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.popular_2i1r h4 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.popular_2i1r p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 15px;
+    max-height: 80px; /* Giới hạn chiều cao mô tả */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.popular_2i1r h6.button a {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.popular_2i1r h6.button a:hover {
+    background-color: #c82333;
+}
+
+/* Phân cách rõ ràng giữa các tab */
+.popular_2 {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .trend_2im1 img {
+        height: 200px; /* Giảm chiều cao ảnh trên mobile */
+    }
+
+    .trend_2ilast {
+        min-height: 180px; /* Giảm chiều cao tối thiểu trên mobile */
+    }
+
+    .trend_2ilast p {
+        max-height: 60px; /* Giảm chiều cao mô tả trên mobile */
+        -webkit-line-clamp: 2; /* Giới hạn 2 dòng trên mobile */
+    }
+
+    #popular .nav-tabs .nav-link {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .popular_2i1r p {
+        font-size: 0.85rem;
+        max-height: 60px;
+    }
+}

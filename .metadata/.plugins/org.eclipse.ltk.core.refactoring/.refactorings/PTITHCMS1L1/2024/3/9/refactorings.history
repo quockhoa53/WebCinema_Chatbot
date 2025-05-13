@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;spring-config-mvc.xml&apos; to &apos;configs&apos;&#x0D;&#x0A;- Original project: &apos;PTITHCMS1L1&apos;&#x0D;&#x0A;- Destination element: &apos;configs&apos;&#x0D;&#x0A;- Original element: &apos;spring-config-mvc.xml&apos;" description="Copy file" element1="src/main/webapp/WEB-INF/configs/spring-config-mvc.xml" files="1" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1709312974776" target="/Cinema/src/main/webapp/WEB-INF/configs" units="0" version="1.0"/>
+</session>

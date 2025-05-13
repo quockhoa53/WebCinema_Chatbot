@@ -199,7 +199,7 @@ public class RegisterController {
 			
 			model.addAttribute("tk",taiKhoan);
 			ss.setAttribute("user", taiKhoan);
-			model.addAttribute("message","Thêm thành công!");
+			model.addAttribute("message","success");
 			model.addAttribute("login", false);
 			return "register";
 		}

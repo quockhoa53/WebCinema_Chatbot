@@ -2,6 +2,7 @@ package poly.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import org.hibernate.Query;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import poly.controller.LoginController;
+import poly.entity.KhachHang;
 import poly.entity.Phim;
 
 @Transactional
@@ -20,30 +21,29 @@ import poly.entity.Phim;
 public class home {
     @Autowired
     SessionFactory factory;
-    
-	@RequestMapping("/home")
-	public String home(ModelMap model) {
-		if(LoginController.taikhoan.getEmail() == null) {
-			model.addAttribute("login", false);
-		}
-		else {
-			model.addAttribute("login", true);
-			model.addAttribute("user", LoginController.kh);
-		}
-		
+
+    @RequestMapping("/home")
+    public String home(ModelMap model, HttpSession session) {
+        KhachHang khachHang = (KhachHang) session.getAttribute("user");
+
+        if (khachHang == null) {
+            model.addAttribute("login", false);
+        } else {
+            model.addAttribute("login", true);
+            model.addAttribute("user", khachHang);
+        }
+
         List<Phim> phimList = getMovies();
         model.addAttribute("phimList", phimList);
-        
-		return "home";
-	}
-	
-    //All phim
+
+        return "home";
+    }
+
+    // All phim
     public List<Phim> getMovies() {
-   	 Session session = factory.getCurrentSession();
+        Session session = factory.getCurrentSession();
         String hql = "FROM Phim";
         Query query = session.createQuery(hql);
-        @SuppressWarnings("unchecked")
-        List<Phim> list = query.list();
-        return list;
-   }
+        return query.list();
+    }
 }

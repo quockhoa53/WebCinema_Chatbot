@@ -438,9 +438,6 @@ public class MovieController {
 	            }
 	        }
 
-
-
-
 	        t.commit();
 	        redirectAttributes.addFlashAttribute("message", new Message("success", "Chỉnh sửa thành công"));
 	        return "redirect:/admin/movie.htm";

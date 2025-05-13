@@ -1,11 +1,12 @@
 package poly.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import java.util.UUID;
 
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
@@ -20,7 +21,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import admin.controller.Message;
 import poly.bean.Validator_check;
 import poly.entity.TaiKhoan;
 import externalFunc.func;
@@ -29,88 +32,105 @@ import externalFunc.func;
 @Controller
 @RequestMapping("/forget")
 public class ForgetController {
-	@Autowired
-	SessionFactory factory;
-		
-	@Autowired
-	JavaMailSender mailer;
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public String index(ModelMap model,HttpServletRequest request,HttpSession ss) {
-		
-		HttpSession session = request.getSession();
-		if(LoginController.taikhoan.getEmail() == null)
-		{
-			model.addAttribute("login","Login");
-		}
-		else
-		{
-			session.removeAttribute("user");
-			model.addAttribute("login","Login");
-			LoginController.taikhoan = new TaiKhoan();
-		}
-		model.addAttribute("login", false);
-		return "forget";
-	}
-	
-	@RequestMapping(value = "/reset",method=RequestMethod.POST)
-	public String insert(ModelMap model,HttpServletRequest request,HttpSession ss,
-			@ModelAttribute("email") String email) throws NoSuchAlgorithmException
-	{
-		email.trim();
-		if(email.equals("") == true) {
-			model.addAttribute("errorTK", "Email không được để trống!");
-			return "forger";
-		}
-		
-		Session session = factory.getCurrentSession(); 
-		String hql = "FROM TaiKhoan";
-		Query query = session.createQuery(hql); 
-		List<TaiKhoan> list = query.list();
-		String mknewString=Validator_check.generateRandomNumber()+"";
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		md.update(mknewString.getBytes());
-		byte[] digest = md.digest();
-		String myHash = func.bytesToHex(digest).toLowerCase();
-	    		
-		for(TaiKhoan u : list) {
-			if(email.equals(u.getEmail().trim())==true) {
-				try {
-					Session session_1 = factory.getCurrentSession();
-					String hql_1 = "UPDATE TaiKhoan set Password = :myHash where Email = :email";
-					Query query_1 = session_1.createQuery(hql_1);
-					query_1.setParameter("myHash",myHash);
-					query_1.setParameter("email", email);
-					int affectedRows_1 = query_1.executeUpdate();
-					
-					//Sử dụng lớp trợ giúp
-					MimeMessage mail=mailer.createMimeMessage();
-MimeMessageHelper helper= new MimeMessageHelper(mail,true);
-					 
-					helper.setFrom("movie","movie");
-					helper.setTo(email);
-					helper.setReplyTo("movie","movie");
-					helper.setSubject("LẤY LẠI MẬT KHẨU!");
-					String body="Mật khẩu mới của bạn là: "+mknewString; 
-					helper.setText(body,true);
-					
-					mailer.send(mail);
-					
-					model.addAttribute("messageA","Vào email của bạn để lấy mật khẩu mới!");
-					model.addAttribute("login", false);
-					
-					return "forget";
-				}
-				catch(Exception e)
-				{
-					model.addAttribute("messageA","Lấy mật khẩu mới thất bại!");
-					model.addAttribute("login", false);
-					return "forget";
-				}
-			}
-		}
-		model.addAttribute("login", false);
-		model.addAttribute("messageA", "Email đăng kí không tồn tại!");
-		return "forget";
-	}
+    @Autowired
+    SessionFactory factory;
+
+    @Autowired
+    JavaMailSender mailer;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String index(ModelMap model, HttpSession session) {
+        // Kiểm tra trạng thái đăng nhập
+        if (session.getAttribute("user") != null || session.getAttribute("tk") != null) {
+            session.removeAttribute("user");
+            session.removeAttribute("tk");
+            session.removeAttribute("mk");
+            model.addAttribute("message", new Message("info", "Bạn đã được đăng xuất để đặt lại mật khẩu."));
+        }
+        model.addAttribute("login", false);
+        return "forget";
+    }
+
+    @RequestMapping(value = "/reset", method = RequestMethod.POST)
+    public String reset(ModelMap model, @ModelAttribute("email") String email, RedirectAttributes redirectAttributes) {
+        email = email != null ? email.trim() : "";
+        if (email.isEmpty()) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Email không được để trống!"));
+            return "redirect:/forget.htm";
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Email không đúng định dạng!"));
+            return "redirect:/forget.htm";
+        }
+
+        Session session = factory.getCurrentSession();
+        String hql = "FROM TaiKhoan WHERE email = :email";
+        Query query = session.createQuery(hql);
+        query.setParameter("email", email);
+        TaiKhoan taiKhoan = (TaiKhoan) query.uniqueResult();
+
+        if (taiKhoan == null) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Email không tồn tại!"));
+            return "redirect:/forget.htm";
+        }
+
+        // Tạo mật khẩu ngẫu nhiên
+        String newPassword = generateRandomPassword();
+        String hashedPassword;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(newPassword.getBytes());
+            byte[] digest = md.digest();
+            hashedPassword = func.bytesToHex(digest).toLowerCase();
+        } catch (NoSuchAlgorithmException e) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Lỗi hệ thống khi tạo mật khẩu!"));
+            return "redirect:/forget.htm";
+        }
+
+        // Cập nhật mật khẩu
+        String hqlUpdate = "UPDATE TaiKhoan SET password = :password WHERE email = :email";
+        Query queryUpdate = session.createQuery(hqlUpdate);
+        queryUpdate.setParameter("password", hashedPassword);
+        queryUpdate.setParameter("email", email);
+        int affectedRows = queryUpdate.executeUpdate();
+
+        if (affectedRows == 0) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Không thể cập nhật mật khẩu!"));
+            return "redirect:/forget.htm";
+        }
+
+        // Gửi email
+        try {
+            MimeMessage mail = mailer.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mail, true);
+            helper.setFrom("movie@support.com", "Movie Support");
+            helper.setTo(email);
+            helper.setReplyTo("movie@support.com", "Movie Support");
+            helper.setSubject("LẤY LẠI MẬT KHẨU");
+            String body = "Mật khẩu mới của bạn là: " + newPassword + "<br>" +
+                          "Vui lòng đổi mật khẩu ngay sau khi đăng nhập.";
+            helper.setText(body, true);
+            mailer.send(mail);
+
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("success", "Vào email của bạn để lấy mật khẩu mới!"));
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Không thể gửi email, vui lòng thử lại sau!"));
+        }
+
+        return "redirect:/forget.htm";
+    }
+
+    private String generateRandomPassword() {
+        // Tạo mật khẩu ngẫu nhiên an toàn hơn
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        return uuid.substring(0, 12); // Lấy 12 ký tự đầu
+    }
 }

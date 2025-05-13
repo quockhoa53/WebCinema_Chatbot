@@ -189,6 +189,7 @@ public class ShowtimeController {
 	    }
 
 	    List<Phim> phimTrue = getPhims();
+	    System.out.println(phimTrue);
 	    List<PhongChieu> phongChieuTrue = getListRooms();
 	    model.addAttribute("lc", list);
 	    model.addAttribute("pct", phongChieuTrue);

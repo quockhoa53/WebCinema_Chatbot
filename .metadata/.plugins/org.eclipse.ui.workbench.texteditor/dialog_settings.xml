@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value=""/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="khach2@gmail.com"/>
+			<item value="8080"/>
+			<item value="error-message"/>
+			<item value="getPhims()"/>
+			<item value="category"/>
+			<item value="genre"/>
+			<item value="getPhims"/>
+			<item value="#greeting"/>
+			<item value="BackUrl"/>
+			<item value=".text-muted"/>
+			<item value=".text-muted {&#x0A;&#x09;--bs-text-opacity: 1;&#x0A;&#x09;/* color: #6c757d !important; */&#x0A;}"/>
+			<item value="overflow-y: auto;"/>
+			<item value="chat-content"/>
+			<item value="admin"/>
+			<item value="password"/>
+		</list>
+		<list key="replacehistory">
+			<item value="Genre"/>
+			<item value="type"/>
+			<item value="staff"/>
+			<item value="actors"/>
+			<item value="9999"/>
+			<item value="&apos;"/>
+			<item value="99"/>
+			<item value=""/>
+			<item value="String myHash = func.bytesToHex(digest).toLowerCase();"/>
+			<item value="func.bytesToHex"/>
+			<item value="images"/>
+			<item value="/images"/>
+			<item value="images/"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1124"/>
+		<item key="DIALOG_Y_ORIGIN" value="565"/>
+		<item key="DIALOG_WIDTH" value="414"/>
+		<item key="DIALOG_HEIGHT" value="454"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-15|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="646"/>
+		<item key="DIALOG_Y_ORIGIN" value="354"/>
+	</section>
+</section>

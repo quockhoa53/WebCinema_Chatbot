@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;DoAnWebCinema/src/main/webapp/css/chatbox.css&apos; to &apos;chatbot.css&apos;" description="Rename resource &apos;chatbox.css&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/webapp/css/chatbox.css" name="chatbot.css" stamp="1733291951053" updateReferences="true"/>
+</session>

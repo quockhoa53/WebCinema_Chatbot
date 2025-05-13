@@ -7,10 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,111 +16,119 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import poly.controller.LoginController;
+import poly.entity.NhanVien;
 import poly.entity.TaiKhoan;
-import admin.controller.Message;
 import externalFunc.func;
+
 @Transactional
 @Controller
 @RequestMapping("/admin/")
 public class PasswordController {
 
-	@Autowired
-	SessionFactory factory;
-	
-	@RequestMapping("password")
-	public String change(ModelMap model) {
-		model.addAttribute("user", LoginController.nv);
-		model.addAttribute("tk", LoginController.taikhoan);
-		return "admin/password";
-	}
-	
-	public void doDL(ModelMap model) {
-		model.addAttribute("user", LoginController.nv);
-		model.addAttribute("tk", LoginController.taikhoan);
-	}
-	
-	@RequestMapping(value = "/change/password", method = RequestMethod.POST)
-	public String updatePass(ModelMap model, HttpSession ss, HttpServletRequest request, RedirectAttributes redirectAttributes)
-			throws NoSuchAlgorithmException {
-		String oldPass = request.getParameter("oldPass");
-		String newPass = request.getParameter("newPass");
-		String cfnewPass = request.getParameter("confirmPass");
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		md.update(oldPass.trim().getBytes());
-		byte[] digest = md.digest();
-		String myHash = func.bytesToHex(digest).toLowerCase();
-		TaiKhoan a = LoginController.taikhoan;
-		if (newPass.toString().trim().length() >8) {
-			model.addAttribute("message1", "Mật khẩu không quá 8 ký tự");
-			doDL(model);
-			System.out.println(0);
-			redirectAttributes.addFlashAttribute("message",
-					new Message("error","mk k quá 8 kí tự"));
-			return "redirect:/admin/password.htm";
-		}
-		if (oldPass.equals(LoginController.matKhau)) {
-			if (newPass.equals(cfnewPass)) {
-				MessageDigest md1 = MessageDigest.getInstance("MD5");
-				md1.update(newPass.trim().getBytes());
-				byte[] digest1 = md1.digest();
-				String myHash1 = func.bytesToHex(digest1).toLowerCase();
-				a.setPassword(myHash1);
-				System.out.println(1);
-			} else {
-				model.addAttribute("message1", "Mật khẩu xác nhận không giống nhau");
-				redirectAttributes.addFlashAttribute("message",
-						new Message("error","mật khẩu xác nhận không giống nhau"));
-				doDL(model);
-				System.out.println(2);
-				//model.addAttribute("login", true);
-				return "redirect:/admin/password.htm";
-			}
-			if(newPass.equals("01234567") == true ) {
-				model.addAttribute("message1", "Khách hàng nên đổi mật khẩu mới để bảo mật!");
-				redirectAttributes.addFlashAttribute("message",
-						new Message("error","Không sử dụng mật khẩu này"));
-				doDL(model);
-				System.out.println(3);
-				//model.addAttribute("login", true);
-				return "redirect:/admin/password.htm";
-			}
-		} else {
-			model.addAttribute("message1", "Sai mật khẩu cũ!");
-			redirectAttributes.addFlashAttribute("message",
-					new Message("error","sai mật khẩu cũ"));
-			doDL(model);
-			System.out.println(4);
-			//model.addAttribute("login", true);
-			return "redirect:/admin/password.htm";
-		} 
-		Session session = factory.openSession();
-		Transaction t = session.beginTransaction();
-		try {
-			LoginController.matKhau = newPass;
-			session.update(a);
-			t.commit();
-//			model.addAttribute("message", "Cáº­p nháº­t thÃ nh cÃ´ng!");
-			redirectAttributes.addFlashAttribute("message",
-					new Message("success","Đổi mật khẩu thành công"));
-			System.out.println(5);
-			return "redirect:/admin/password.htm";
-		} catch (Exception e) {
-			t.rollback();
-			model.addAttribute("message1", "Cập nhật thất bại");
-			System.out.println(6);
-			redirectAttributes.addFlashAttribute("message",
-					new Message("error","sửa thất bại catch"));
-			
-		} finally {
-			session.close();
-		}
-		doDL(model);
-		//model.addAttribute("login", true);
-		System.out.println(7);
-		redirectAttributes.addFlashAttribute("message",
-				new Message("error","sửa thất bại"));
-		return "redirect:/admin/password.htm";
-	
-	}
+    @Autowired
+    SessionFactory factory;
+
+    @RequestMapping("password")
+    public String change(ModelMap model, HttpSession session, RedirectAttributes redirectAttributes) {
+        // Lấy thông tin từ session
+        TaiKhoan taiKhoan = (TaiKhoan) session.getAttribute("tk");
+        NhanVien nhanVien = (NhanVien) session.getAttribute("user");
+
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (taiKhoan == null || nhanVien == null) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Vui lòng đăng nhập để thay đổi mật khẩu!"));
+            return "redirect:/login.htm";
+        }
+
+        // Thêm thông tin vào model
+        model.addAttribute("tk", taiKhoan);
+        model.addAttribute("user", nhanVien);
+
+        return "admin/password";
+    }
+
+    @RequestMapping(value = "/change/password", method = RequestMethod.POST)
+    public String updatePass(ModelMap model, HttpSession session, HttpServletRequest request,
+                            RedirectAttributes redirectAttributes) throws NoSuchAlgorithmException {
+        // Lấy thông tin từ session
+        TaiKhoan taiKhoan = (TaiKhoan) session.getAttribute("tk");
+        String currentPassword = (String) session.getAttribute("mk");
+
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (taiKhoan == null) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Vui lòng đăng nhập để thay đổi mật khẩu!"));
+            return "redirect:/login.htm";
+        }
+
+        // Lấy tham số từ request
+        String oldPass = request.getParameter("oldPass");
+        String newPass = request.getParameter("newPass");
+        String cfnewPass = request.getParameter("confirmPass");
+
+        // Xác thực đầu vào
+        if (oldPass == null || oldPass.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu cũ không được để trống!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        if (newPass == null || newPass.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu mới không được để trống!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        if (newPass.trim().length() < 8) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu mới phải có ít nhất 8 ký tự!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        // Mã hóa mật khẩu cũ để so sánh
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(oldPass.trim().getBytes());
+        byte[] digest = md.digest();
+        String oldPassHash = func.bytesToHex(digest).toLowerCase();
+
+        // So sánh mật khẩu cũ
+        if (!oldPassHash.equals(taiKhoan.getPassword().trim())) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu cũ không đúng!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        // Kiểm tra mật khẩu mới và xác nhận
+        if (!newPass.equals(cfnewPass)) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu xác nhận không khớp!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        // Kiểm tra mật khẩu yếu
+        if (newPass.trim().matches("^(01234567|12345678|password)$")) {
+            redirectAttributes.addFlashAttribute("message",
+                    new Message("error", "Mật khẩu quá yếu, vui lòng chọn mật khẩu khác!"));
+            return "redirect:/admin/password.htm";
+        }
+
+        // Mã hóa mật khẩu mới
+        md.reset();
+        md.update(newPass.trim().getBytes());
+        byte[] digestNew = md.digest();
+        String newPassHash = func.bytesToHex(digestNew).toLowerCase();
+
+        // Cập nhật mật khẩu
+        Session dbSession = factory.getCurrentSession();
+        taiKhoan.setPassword(newPassHash);
+        dbSession.update(taiKhoan);
+
+        // Cập nhật mật khẩu trong session
+        session.setAttribute("mk", newPass);
+
+        redirectAttributes.addFlashAttribute("message",
+                new Message("success", "Đổi mật khẩu thành công!"));
+        return "redirect:/admin/password.htm";
+    }
 }

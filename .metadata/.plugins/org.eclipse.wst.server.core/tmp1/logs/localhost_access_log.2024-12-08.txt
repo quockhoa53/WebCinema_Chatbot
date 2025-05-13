@@ -1,0 +1,6 @@
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/trangchu.htm HTTP/1.1" 200 82084
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/css/bootstrap.min.css HTTP/1.1" 304 -
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/tranthanh.jpeg HTTP/1.1" 404 783
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/vungocdang.webp HTTP/1.1" 404 784
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/img/30.jpg HTTP/1.1" 404 783
+0:0:0:0:0:0:0:1 - - [08/Dec/2024:00:04:02 +0700] "GET /DoAnWebCinema/img/3.jpg HTTP/1.1" 404 782
